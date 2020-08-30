@@ -7,7 +7,6 @@ const fs = require('fs')
 const mustache = require('mustache');
 const salt = genSaltSync(10)
 
-
 const Register = (req, res)=> {
   const {
     full_name,
@@ -203,24 +202,29 @@ const ResetPassword = (req, res)=> {
 
 const confirmResetPassword = (req, res)=> {
   const reset = req.params.reset
+  // const garam = await genSaltSync(10)
   const {
     password
   } = req.body
   const data = hashSync(password, salt)
   jwt.verify(reset, process.env.SECRET_KEY, (err, result)=> {
     if(err){
-      helper.response(res,null, 404,'token expired!') 
+      console.log('err')
+      helper.response(res,null, 403,'token expired!') 
     }else{
+      console.log(data)
       userModel.changePassword(data, result.id)
       .then(newResult => {
         helper.response(res,newResult, 200,'reset password success!') 
       })
-      .catch(() => {
-        helper.response(res,null, 403,'something wrong!')
+      .catch((err) => {
+        console.log(err)
+        helper.response(res,null, 500,'something wrong!')
       })
     }
   })
 }
+
 
 
 
