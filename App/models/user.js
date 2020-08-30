@@ -66,7 +66,7 @@ const confirmRegister = (idUser)=> {
 
 const changePassword = (password,idUser)=> {
   return new Promise((resolve, reject)=> {
-    db.query('UPDATE users SET password = ?  WHERE user_id = ?', [password, idUser], (err, result)=> {
+    db.query(`UPDATE users SET password = ?  WHERE user_id = ?`, [password,idUser], (err, result)=> {
       if(!err){
         resolve(result)
       }else{

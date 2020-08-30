@@ -1,11 +1,11 @@
 const userModel = require('../models/user');
 const helper = require('../helpers/response');
-const sendEmailconfirm = require('../helpers/sendEmail')
-const {genSaltSync, hashSync, compareSync} = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const fs = require('fs')
+const sendEmailconfirm = require('../helpers/sendEmail');
+const {genSaltSync, hashSync, compareSync} = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
 const mustache = require('mustache');
-const salt = genSaltSync(10)
+const salt = genSaltSync(10);
 
 const Register = (req, res)=> {
   const {
@@ -175,7 +175,7 @@ const ResetPassword = (req, res)=> {
     if(result.length == 0){
       helper.response(res,null, 404,`email: ${data} not found!`)
     }else{
-      const token = jwt.sign({id: result[0].user_id, email: result[0].email, full_name: result[0].full_name, username: result[0].username, status: result[0].status}, process.env.SECRET_KEY, {expiresIn: '1h'})
+      const token = jwt.sign({id: result[0].user_id, email: result[0].email, full_name: result[0].full_name, username: result[0].username, status: result[0].status}, process.env.SECRET_KEY)
       const html = fs.readFileSync('./template/resetPassword.html', 'utf8')
       const renderHtml = mustache.render(html, {name: result[0].full_name, token: token})
       const mailOptions = {
@@ -202,17 +202,14 @@ const ResetPassword = (req, res)=> {
 
 const confirmResetPassword = (req, res)=> {
   const reset = req.params.reset
-  // const garam = await genSaltSync(10)
-  const {
-    password
-  } = req.body
-  const data = hashSync(password, salt)
+  const newPassword = req.body
+  console.log(newPassword)
+  const data = hashSync(newPassword.password,salt)
   jwt.verify(reset, process.env.SECRET_KEY, (err, result)=> {
     if(err){
-      console.log('err')
+      console.log(err)
       helper.response(res,null, 403,'token expired!') 
     }else{
-      console.log(data)
       userModel.changePassword(data, result.id)
       .then(newResult => {
         helper.response(res,newResult, 200,'reset password success!') 
