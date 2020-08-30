@@ -69,7 +69,7 @@ const login = (req, res)=> {
       }
       const token = jwt.sign({id: result[0].user_id, email: result[0].email, full_name: result[0].full_name, username: result[0].username, status: result[0].status}, process.env.SECRET_KEY, {expiresIn: '1h'})
       const resultNew = {
-        id: result[0].id,
+        id: result[0].user_id,
         token: token
       }
       helper.response(res,resultNew, 200,'Login success!')
