@@ -29,7 +29,7 @@ const Register = (req, res)=> {
         }
         userModel.register(data)
           .then((newResult)=> {
-            const token = jwt.sign({ user_id: newResult.insertId, email: data.email, full_name: data.full_name, username : data.username, status: data.status}, process.env.SECRET_KEY, { expiresIn: '1h' })
+            const token = jwt.sign({ user_id: newResult.insertId, email: data.email, full_name: data.full_name, username : data.username, status: data.status}, process.env.SECRET_KEY)
             const html = fs.readFileSync('./template/register.html', 'utf8')
             const renderHtml = mustache.render(html, {nama: data.full_name, token: token})
             const mailOptions = {
