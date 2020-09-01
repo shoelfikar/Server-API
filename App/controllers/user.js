@@ -31,7 +31,7 @@ const Register = (req, res)=> {
           .then((newResult)=> {
             const token = jwt.sign({ user_id: newResult.insertId, email: data.email, full_name: data.full_name, username : data.username, status: data.status}, process.env.SECRET_KEY)
             const html = fs.readFileSync('./template/register.html', 'utf8')
-            const renderHtml = mustache.render(html, {nama: data.full_name, token: token})
+            const renderHtml = mustache.render(html, {nama: data.full_name, token: token, email: data.email})
             const mailOptions = {
               from: process.env.EMAIL,
               to: data.email,
@@ -148,7 +148,7 @@ const confirmRegister = (req, res)=> {
   const reqToken = req.query.token
   jwt.verify(reqToken, process.env.SECRET_KEY, (err,result)=> {
     if(err){
-      helper.response(res,null, 404,'failed activation', err)
+      helper.response(res,null, 404,'failed activation, link activation salah', err)
     }else{
       userModel.confirmRegister(result.user_id)
       .then(()=> {
