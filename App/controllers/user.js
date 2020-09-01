@@ -114,7 +114,7 @@ const updateUser = (req, res)=> {
         return helper.response(res, null, 404, `id ${idUser} not found!`)
       }
 
-      const imageProfil = `http://${req.get('host')}/uploads/${req.file.filename}`
+      const imageProfil = `https://${req.get('host')}/fileStorage/${req.file.filename}`
       const user = {
         full_name : full_name || result.full_name,
         email: email || result.email,
@@ -122,18 +122,16 @@ const updateUser = (req, res)=> {
         updated_at : new Date()
       }
       if(imageProfil) {
-        console.log(imageProfil)
         user.profil = imageProfil
       }
       if(password) {
-        console.log(newPassword)
         const newPassword = hashSync(password, salt)
         user.password = newPassword
       }
       userModel.updateUser(user, idUser)
         .then(() => {
           console.log(user)
-          helper.response(res,null, 200,`data dari user dengan id: ${idUser}`)
+          helper.response(res,null, 200,`data updated successfully!`)
         })
     })
     .catch((err) => {
@@ -148,7 +146,7 @@ const confirmRegister = (req, res)=> {
   const reqToken = req.query.token
   jwt.verify(reqToken, process.env.SECRET_KEY, (err,result)=> {
     if(err){
-      helper.response(res,null, 404,'failed activation, link activation salah', err)
+      helper.response(res,null, 404,'failed, Activation link wrong!', err)
     }else{
       userModel.confirmRegister(result.user_id)
       .then(()=> {

@@ -12,7 +12,7 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(morgan('dev'))
 app.use('/api/v1/server', Router)
-app.use('/api/v1/pos/fileStorage',express.static('./fileStorage'))
+app.use('/api/v1/server/fileStorage',express.static('./fileStorage'))
 
 app.listen(port, ()=> {
   console.log(`Server is running on port ${port}`)
