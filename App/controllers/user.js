@@ -107,21 +107,27 @@ const updateUser = (req, res)=> {
     username,
     password
   } = req.body
+  const newData = {
+    full_name,
+    username,
+    email,
+    password
+  }
   userModel.getUserById(idUser)
     .then(result => {
       if(result === undefined) {
-        console.log(result)
         return helper.response(res, null, 404, `id ${idUser} not found!`)
       }
-
-      const imageProfil = `https://${req.get('host')}/fileStorage/${req.file.filename}`
+      const file = req.file
       const user = {
-        full_name : full_name || result.full_name,
-        email: email || result.email,
-        username :username || result.username,
+        full_name : newData.full_name || result.full_name,
+        username :newData.username,
+        email: newData.email || result.email,
+        password: newData.password || result.password,
         updated_at : new Date()
       }
-      if(imageProfil) {
+      if(file) {
+        const imageProfil = `https://${req.get('host')}/fileStorage/${req.file.filename}`
         user.profil = imageProfil
       }
       if(password) {
@@ -134,8 +140,7 @@ const updateUser = (req, res)=> {
           helper.response(res,null, 200,`data updated successfully!`)
         })
     })
-    .catch((err) => {
-      console.log(err)
+    .catch(() => {
       helper.response(res,null, 500,'something wrong!')
     })
 }
